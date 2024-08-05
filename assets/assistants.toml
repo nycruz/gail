@@ -1,0 +1,22 @@
+[[role]]
+id = "swe"
+name = "Software Engineer"
+instruction = "You are a Software Engineer."
+
+[[role]]
+id = "sre"
+name = "Site Reliability Engineer"
+instruction = "You are a Site Reliability Engineer."
+
+[[skill]]
+id = "default"
+name = "Provide context, examples, and analogies in your answers. Also be concise."
+
+[[skill]]
+id = "code-snippet-review"
+name = "Suggest improvements for the following code snippet."
+
+[[skill]]
+id = "monitoring"
+name = "Help answer questions regarding monitoring, alerting, Grafana, prometheus, promql, Datadog, dashboards, metrics, and observability."
+roleIDs = ["sre", "devops"]
