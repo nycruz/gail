@@ -101,7 +101,8 @@ func createConfigDirectory(partialconfigDirPath string) (string, error) {
 
 // createValidatorConfigFile creates the 'validations.toml' file in the config directory.
 func createValidatorConfigFile(configDir string, validationsFullFilename string) error {
-	sourceFilePath := fmt.Sprintf("%s/%s", "./assets", validationsFullFilename)
+	currentDir, _ := os.Getwd()
+	sourceFilePath := fmt.Sprintf("%s/%s/%s", currentDir, "assets", validationsFullFilename)
 	sourceFile, err := os.Open(sourceFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to open '%s': %w", sourceFilePath, err)
@@ -129,7 +130,8 @@ func createValidatorConfigFile(configDir string, validationsFullFilename string)
 
 // createAssistantsConfigFile creates the 'assistants.toml' file in the config directory.
 func createAssistantsConfigFile(configDir string, assistantsFullFilename string) error {
-	sourceFilePath := fmt.Sprintf("%s/%s", "./assets", assistantsFullFilename)
+	currentDir, _ := os.Getwd()
+	sourceFilePath := fmt.Sprintf("%s/%s/%s", currentDir, "assets", assistantsFullFilename)
 	sourceFile, err := os.Open(sourceFilePath)
 	if err != nil {
 		return fmt.Errorf("failed to open '%s': %w", sourceFilePath, err)
