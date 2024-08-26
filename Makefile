@@ -1,6 +1,9 @@
 run:
 	go run *.go
 
+build:
+	go build -o ./bin/gail *.go
+
 dev-gpt:
 	go run *.go --model=gpt
 
