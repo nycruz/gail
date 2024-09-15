@@ -5,7 +5,7 @@ type Token int
 
 const (
 	ModelGPT              string = "gpt"
-	ModelGPTName          Model  = "gpt-4o"
+	ModelGPTName          Model  = "gpt-4o-2024-08-06"
 	ModelGPT0125MaxTokens Token  = 4096
 
 	ModelClaude          string = "claude"
