@@ -71,16 +71,19 @@ func (m model) viewportHeaderView() string {
 		l.Foreground(lipgloss.Color("6"))
 	}
 
-	title := titleStyle.Render(fmt.Sprintf(" %s ", m.llm.GetUser())) // 6
-	halfTitle := lipgloss.Width(title) / 2
-	borderLines := strings.Repeat("─", max(0, (m.viewportCurrentWidth/2)-halfTitle))
+	title := titleStyle.Render(fmt.Sprintf(" %s ", m.llm.GetUser()))
+	titleWidth := lipgloss.Width(title)
+	leftBorderWidth := (m.viewportCurrentWidth - titleWidth) / 2
+	rightBorderWidth := m.viewportCurrentWidth - titleWidth - leftBorderWidth
+	leftBorder := strings.Repeat("─", max(0, leftBorderWidth))
+	rightBorder := strings.Repeat("─", max(0, rightBorderWidth))
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Center,
 		l.Render("╭"),
-		l.Render(borderLines),
+		l.Render(leftBorder),
 		title,
-		l.Render(borderLines),
+		l.Render(rightBorder),
 		l.Render("╮"),
 	)
 }
@@ -109,17 +112,19 @@ func (m model) textAreaHeaderView() string {
 	if m.focusOnTextArea {
 		l.Foreground(lipgloss.Color("6"))
 	}
-
-	title := titleStyle.Render(" Prompt ") // 8
-	halfTitle := lipgloss.Width(title) / 2
-	borderLines := strings.Repeat("─", max(0, (m.textAreaCurrentWidth/2)-halfTitle))
+	title := titleStyle.Render(" Prompt ")
+	titleWidth := lipgloss.Width(title)
+	leftBorderWidth := (m.textAreaCurrentWidth - titleWidth) / 2
+	rightBorderWidth := m.textAreaCurrentWidth - titleWidth - leftBorderWidth
+	leftBorder := strings.Repeat("─", max(0, leftBorderWidth))
+	rightBorder := strings.Repeat("─", max(0, rightBorderWidth))
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Center,
 		l.Render("╭"),
-		l.Render(borderLines),
+		l.Render(leftBorder),
 		title,
-		l.Render(borderLines),
+		l.Render(rightBorder),
 		l.Render("╮"),
 	)
 }
