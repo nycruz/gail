@@ -143,7 +143,6 @@ func (m model) View() string {
 	)
 }
 
-// Update
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	var (
 		tiCmd tea.Cmd
@@ -153,41 +152,29 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		slCmd tea.Cmd
 	)
 
+	// First, update the textarea
 	m.textarea, tiCmd = m.textarea.Update(msg)
-	m.viewport, vpCmd = m.viewport.Update(msg)
+
+	// Conditionally update the viewport only if the textarea is not focused
+	if !m.focusOnTextArea {
+		m.viewport, vpCmd = m.viewport.Update(msg)
+	}
+
 	m.roleList, rlCmd = m.roleList.Update(msg)
 	m.skillList, slCmd = m.skillList.Update(msg)
 
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-
-		if m.focusOnTextArea {
-			m.viewport.KeyMap.Up.SetEnabled(false)
-			m.viewport.KeyMap.Down.SetEnabled(false)
-			m.viewport.KeyMap.PageUp.SetEnabled(false)
-			m.viewport.KeyMap.PageDown.SetEnabled(false)
-			m.textarea.Focus()
-		} else {
-			m.viewport.KeyMap.Up.SetEnabled(true)
-			m.viewport.KeyMap.Down.SetEnabled(true)
-			m.viewport.KeyMap.PageUp.SetEnabled(true)
-			m.viewport.KeyMap.PageDown.SetEnabled(true)
-			m.textarea.Blur()
-		}
-
 		switch msg.String() {
-		// Do nothing when "q" is pressed.
-		// If ommitted, pressing "q" causes the program to quit.
 		case "q":
+			// Do nothing when "q" is pressed to prevent quitting
 			return m, nil
 		}
 
 		switch msg.Type {
-		// Quit the application
 		case tea.KeyCtrlC, tea.KeyEsc:
 			return m, tea.Quit
 
-		// Focus on textarea or viewport
 		case tea.KeyShiftTab:
 			m.focusOnTextArea = !m.focusOnTextArea
 			if m.focusOnTextArea {
@@ -203,25 +190,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.viewport.KeyMap.PageDown.SetEnabled(true)
 				m.textarea.Blur()
 			}
-
 			return m, nil
 
-		// Submit message to OpenAI
 		case tea.KeyTab:
 			m.textAreaContent = m.textarea.Value()
 			m.textarea.Reset()
 			m.textarea.Blur()
 			m.focusOnTextArea = false
 			m.isLoading = true
-			return m, tea.Batch(m.spinner.Tick, m.fetchAnswer(m.role.Name, m.role.Persona, m.skill.Instruction, m.textAreaContent))
+			return m, tea.Batch(
+				m.spinner.Tick,
+				m.fetchAnswer(m.role.Name, m.role.Persona, m.skill.Instruction, m.textAreaContent),
+			)
 
-		// Prompt to select a Role
 		case tea.KeyCtrlR:
 			m.isRolePrompt = true
 			m.textarea.Blur()
 			m.focusOnTextArea = false
 
-		// Prompt to select a Skill
 		case tea.KeyCtrlS:
 			m.isSkillPrompt = true
 			m.textarea.Blur()
@@ -232,12 +218,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, m.skillList.SetItems(skillItems)
 
-		// Copy mode
 		case tea.KeyCtrlY:
 			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
 			return m, m.copyModeRun(unformmatedAnswer)
 
-		// Selects a Role or Skill from the prompt
 		case tea.KeyEnter:
 			if m.isRolePrompt {
 				c, ok := m.roleList.SelectedItem().(RoleItem)
@@ -275,10 +259,8 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.err = msg.err
 			return m, tea.Quit
 		}
-
 		return m, nil
 
-	// Answer from OpenAI
 	case Answer:
 		if err := msg.Error; err != nil {
 			m.err = err
@@ -299,7 +281,6 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, nil
 
-	// Actions when the window starts or resizes
 	case tea.WindowSizeMsg:
 		widthWithBorder := msg.Width - ReducerWidth
 
@@ -343,11 +324,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.skillList.SetWidth(msg.Width - ReducerWidth)
 		m.skillList.SetHeight(msg.Height - ReducerWidth)
 
-	// Thinking spinner
 	case spinner.TickMsg:
 		m.spinner, sCmd = m.spinner.Update(msg)
 
-	// Error handling
 	case errMsg:
 		m.err = msg
 		return m, nil
