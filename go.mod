@@ -1,6 +1,6 @@
 module github.com/nycruz/gail
 
-go 1.21
+go 1.23
 
 require (
 	github.com/alecthomas/chroma v0.10.0

@@ -66,7 +66,7 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	ta := setupTextArea()
 	vp := setupViewPort()
 	s := setupSpinner()
-	h := fadedStyle.Render("'tab' to send, 'Esc' to quit, 'ctrl+r' to pick a role, 'ctrl+s' to pick a skill")
+	h := fadedStyle.Render("'tab' to send, 'Esc' to quit, 'ctrl+r' to pick a role, 'ctrl+e' to pick a skill, 'ctrl+s' to save a conversation, 'ctrl+y' to enter copy mode")
 
 	roles := setupRoles(assistant.Roles)
 	defaultRole := assistant.DefaultRole()
@@ -208,7 +208,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.textarea.Blur()
 			m.focusOnTextArea = false
 
-		case tea.KeyCtrlS:
+		case tea.KeyCtrlE:
 			m.isSkillPrompt = true
 			m.textarea.Blur()
 			m.focusOnTextArea = false
@@ -221,6 +221,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlY:
 			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
 			return m, m.copyModeRun(unformmatedAnswer)
+
+		case tea.KeyCtrlS:
+			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
+			return m, m.saveConversation(unformmatedAnswer)
 
 		case tea.KeyEnter:
 			if m.isRolePrompt {
