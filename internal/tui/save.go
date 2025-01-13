@@ -2,32 +2,36 @@ package tui
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"time"
+
+	tea "github.com/charmbracelet/bubbletea"
 )
 
 type saveModeFinishedMsg struct {
+	msg string
 	err error
 }
 
-func (m model) saveConversation(content string) {
-	homeDir, _ := os.UserHomeDir()
-	historyDir := filepath.Join(homeDir, "gail_history")
-	err := os.MkdirAll(historyDir, os.ModePerm)
-	if err != nil {
-		m.logger.Info(fmt.Sprintf("error creating directory in '%s': %s", historyDir, err))
-		log.Fatal(err)
-	}
+func (m model) saveConversation(content string) tea.Cmd {
+	return func() tea.Msg {
+		homeDir, _ := os.UserHomeDir()
+		historyDir := filepath.Join(homeDir, "gail_history")
+		err := os.MkdirAll(historyDir, os.ModePerm)
+		if err != nil {
+			return saveModeFinishedMsg{err: err}
+		}
 
-	now := time.Now()
-	filename := fmt.Sprintf("conversation_%s.txt", now.Format("2006-01-02-15-04-05"))
-	path := fmt.Sprintf("%s/%s", historyDir, filename)
+		now := time.Now()
+		filename := fmt.Sprintf("conversation_%s.txt", now.Format("2006-01-02-15-04-05"))
+		path := fmt.Sprintf("%s/%s", historyDir, filename)
 
-	err = os.WriteFile(path, []byte(content), 0644)
-	if err != nil {
-		m.logger.Info(fmt.Sprintf("error writing to conversation file: %s", err))
-		log.Fatal(err)
+		err = os.WriteFile(path, []byte(content), 0644)
+		if err != nil {
+			return saveModeFinishedMsg{err: err}
+		}
+
+		return saveModeFinishedMsg{msg: fmt.Sprintf("Conversation saved to %s", path)}
 	}
 }

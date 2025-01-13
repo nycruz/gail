@@ -224,9 +224,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case tea.KeyCtrlS:
 			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
-			m.saveConversation(unformmatedAnswer)
-			// return m, m.saveConversation(unformmatedAnswer)
-			return m, nil
+			return m, m.saveConversation(unformmatedAnswer)
 
 		case tea.KeyEnter:
 			if m.isRolePrompt {
