@@ -68,20 +68,20 @@ func selectModelConfig(modelFlag string) (models.Model, models.Token, string, er
 		if apiKey == "" {
 			return modelName, maxTokens, apiKey, fmt.Errorf("environment variable '%s' not set for model '%s'", envOpenAIAPIKey, models.ModelGPT)
 		}
-	case models.ModelGPTo1:
-		modelName = models.ModelGPTo1Name
-		maxTokens = models.ModelGPTo1MaxTokens
-		apiKey = os.Getenv(envOpenAIAPIKey)
-		if apiKey == "" {
-			return modelName, maxTokens, apiKey, fmt.Errorf("environment variable '%s' not set for model '%s'", envOpenAIAPIKey, models.ModelGPTo1)
-		}
-	case models.ModelGPTo1Mini:
-		modelName = models.ModelGPTo1MiniName
-		maxTokens = models.ModelGPTo1MiniMaxTokens
-		apiKey = os.Getenv(envOpenAIAPIKey)
-		if apiKey == "" {
-			return modelName, maxTokens, apiKey, fmt.Errorf("environment variable '%s' not set for model '%s'", envOpenAIAPIKey, models.ModelGPTo1Mini)
-		}
+	// case models.ModelGPTo1:
+	// 	modelName = models.ModelGPTo1Name
+	// 	maxTokens = models.ModelGPTo1MaxTokens
+	// 	apiKey = os.Getenv(envOpenAIAPIKey)
+	// 	if apiKey == "" {
+	// 		return modelName, maxTokens, apiKey, fmt.Errorf("environment variable '%s' not set for model '%s'", envOpenAIAPIKey, models.ModelGPTo1)
+	// 	}
+	// case models.ModelGPTo1Mini:
+	// 	modelName = models.ModelGPTo1MiniName
+	// 	maxTokens = models.ModelGPTo1MiniMaxTokens
+	// 	apiKey = os.Getenv(envOpenAIAPIKey)
+	// 	if apiKey == "" {
+	// 		return modelName, maxTokens, apiKey, fmt.Errorf("environment variable '%s' not set for model '%s'", envOpenAIAPIKey, models.ModelGPTo1Mini)
+	// 	}
 	default:
 		return modelName, maxTokens, apiKey, fmt.Errorf("invalid model flag '%s'. Use one of ['%s', '%s']", modelFlag, models.ModelClaude, models.ModelGPT)
 	}
