@@ -11,7 +11,7 @@ import (
 
 type saveModeFinishedMsg struct {
 	msg string
-	err error
+	err errMsg
 }
 
 func (m model) saveConversation(content string) tea.Cmd {
