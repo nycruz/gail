@@ -341,7 +341,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func setupTextArea() textarea.Model {
 	ta := textarea.New()
-	ta.Placeholder = "Press 'Tab' to send, 'Esc' to quit, 'Shift+Tab' to switch pane, 'Ctrl+r' to pick a Role, 'Ctrl+s' to pick a Skill, 'Ctrl+y' to enter copy mode"
+	ta.Placeholder = "Press 'Tab' to send, 'Esc' to quit, 'Shift+Tab' to switch pane, 'Ctrl+r' to pick a Role, 'Ctrl+e' to pick a Skill, 'Ctrl+s' to save a conversation, 'Ctrl+y' to enter copy mode"
 	ta.CharLimit = 0
 	ta.ShowLineNumbers = false
 	ta.KeyMap.InsertNewline.SetEnabled(true)
