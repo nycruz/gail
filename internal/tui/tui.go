@@ -40,6 +40,8 @@ type model struct {
 	helpSection     string         // Help section
 	focusOnTextArea bool           // Focus on textarea
 
+	statusBarMessage string
+
 	assistant    *assistant.Assistant // Assistant
 	isRolePrompt bool                 // Role prompt state
 	roleList     list.Model           // List for displaying roles
@@ -75,25 +77,26 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	defaultSkill := assistant.DefaultSkill()
 
 	return model{
-		textarea:        ta,
-		viewport:        vp,
-		spinner:         s,
-		isLoading:       false,
-		senderStyle:     lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
-		receiverStyle:   lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
-		helpSection:     h,
-		focusOnTextArea: true,
-		messagesDisplay: []string{},
-		assistant:       assistant,
-		roleList:        roles,
-		isRolePrompt:    false,
-		role:            defaultRole,
-		skillList:       skills,
-		isSkillPrompt:   false,
-		skill:           defaultSkill,
-		llm:             mdl,
-		logger:          logger,
-		err:             nil,
+		textarea:         ta,
+		viewport:         vp,
+		spinner:          s,
+		isLoading:        false,
+		senderStyle:      lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
+		receiverStyle:    lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
+		helpSection:      h,
+		focusOnTextArea:  true,
+		statusBarMessage: "coco",
+		messagesDisplay:  []string{},
+		assistant:        assistant,
+		roleList:         roles,
+		isRolePrompt:     false,
+		role:             defaultRole,
+		skillList:        skills,
+		isSkillPrompt:    false,
+		skill:            defaultSkill,
+		llm:              mdl,
+		logger:           logger,
+		err:              nil,
 	}
 }
 
@@ -131,6 +134,7 @@ func (m model) View() string {
 			m.viewPortFooterView(),
 			m.textAreaHeaderView(),
 			textAreaStyle.Render(m.textarea.View()),
+			m.statusBarMessage,
 		)
 	}
 
@@ -140,6 +144,7 @@ func (m model) View() string {
 		m.viewPortFooterView(),
 		m.textAreaHeaderView(),
 		textAreaStyle.Render(m.textarea.View()),
+		m.statusBarMessage,
 	)
 }
 
@@ -262,6 +267,14 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if msg.err != nil {
 			m.err = msg.err
 			return m, tea.Quit
+		}
+		return m, nil
+
+	case saveModeFinishedMsg:
+		if msg.err != nil {
+			m.statusBarMessage = fmt.Sprintf("Error saving conversation: %v", msg.err)
+		} else {
+			m.statusBarMessage = msg.msg
 		}
 		return m, nil
 
