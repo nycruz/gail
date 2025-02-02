@@ -54,7 +54,8 @@ var (
 	}()
 
 	infoStyle = func() lipgloss.Style {
-		return titleStyle.Copy().Foreground(lipgloss.Color("6"))
+		ts := titleStyle
+		return ts.Foreground(lipgloss.Color("6"))
 	}()
 )
 
