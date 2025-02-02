@@ -2,6 +2,7 @@ package tui
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -237,7 +238,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if !ok {
 					roleSelectError := "internal error: could not select Role"
 					m.logger.Info(roleSelectError)
-					m.err = fmt.Errorf(roleSelectError)
+					m.err = errors.New(roleSelectError)
 					return m, nil
 				}
 
@@ -252,7 +253,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if !ok {
 					skillSelectError := "internal error: could not select Skill"
 					m.logger.Info(skillSelectError)
-					m.err = fmt.Errorf(skillSelectError)
+					m.err = errors.New(skillSelectError)
 					return m, nil
 				}
 
