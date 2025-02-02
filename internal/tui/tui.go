@@ -78,26 +78,26 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	defaultSkill := assistant.DefaultSkill()
 
 	return model{
-		textarea:         ta,
-		viewport:         vp,
-		spinner:          s,
-		isLoading:        false,
-		senderStyle:      lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
-		receiverStyle:    lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
-		helpSection:      h,
-		focusOnTextArea:  true,
-		statusBarMessage: "coco",
-		messagesDisplay:  []string{},
-		assistant:        assistant,
-		roleList:         roles,
-		isRolePrompt:     false,
-		role:             defaultRole,
-		skillList:        skills,
-		isSkillPrompt:    false,
-		skill:            defaultSkill,
-		llm:              mdl,
-		logger:           logger,
-		err:              nil,
+		textarea:        ta,
+		viewport:        vp,
+		spinner:         s,
+		isLoading:       false,
+		senderStyle:     lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
+		receiverStyle:   lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
+		helpSection:     h,
+		focusOnTextArea: true,
+		// statusBarMessage: "coco",
+		messagesDisplay: []string{},
+		assistant:       assistant,
+		roleList:        roles,
+		isRolePrompt:    false,
+		role:            defaultRole,
+		skillList:       skills,
+		isSkillPrompt:   false,
+		skill:           defaultSkill,
+		llm:             mdl,
+		logger:          logger,
+		err:             nil,
 	}
 }
 
@@ -135,6 +135,16 @@ func (m model) View() string {
 			m.viewPortFooterView(),
 			m.textAreaHeaderView(),
 			textAreaStyle.Render(m.textarea.View()),
+		)
+	}
+
+	if m.statusBarMessage != "" {
+		return lipgloss.JoinVertical(lipgloss.Top,
+			m.viewportHeaderView(),
+			viewPortStyle.Render(m.viewport.View()),
+			m.viewPortFooterView(),
+			m.textAreaHeaderView(),
+			textAreaStyle.Render(m.textarea.View()),
 			statusBarStyle.Render(m.statusBarMessage),
 		)
 	}
@@ -145,7 +155,6 @@ func (m model) View() string {
 		m.viewPortFooterView(),
 		m.textAreaHeaderView(),
 		textAreaStyle.Render(m.textarea.View()),
-		statusBarStyle.Render(m.statusBarMessage),
 	)
 }
 
