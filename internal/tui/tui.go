@@ -135,7 +135,7 @@ func (m model) View() string {
 			m.viewPortFooterView(),
 			m.textAreaHeaderView(),
 			textAreaStyle.Render(m.textarea.View()),
-			m.statusBarMessage,
+			statusBarStyle.Render(m.statusBarMessage),
 		)
 	}
 
@@ -145,7 +145,7 @@ func (m model) View() string {
 		m.viewPortFooterView(),
 		m.textAreaHeaderView(),
 		textAreaStyle.Render(m.textarea.View()),
-		m.statusBarMessage,
+		statusBarStyle.Render(m.statusBarMessage),
 	)
 }
 
