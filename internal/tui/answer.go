@@ -15,6 +15,7 @@ import (
 )
 
 type Answer struct {
+	msg    string
 	Answer string // Answer from Gail
 	Error  errMsg // Error from Gail
 }
@@ -35,7 +36,7 @@ func (m model) fetchAnswer(roleName string, rolePersona string, skillInstruction
 			return Answer{Error: err}
 		}
 
-		return Answer{Answer: highlightedAnswer}
+		return Answer{Answer: highlightedAnswer, msg: "Answer fetched successfully"}
 	}
 }
 
