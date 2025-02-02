@@ -50,8 +50,10 @@ var (
 			Border(lipgloss.RoundedBorder())
 
 	statusBarStyle = lipgloss.NewStyle().
+			Border(lipgloss.NormalBorder(), false, false, false, true).
+			BorderForeground(lipgloss.Color(BoderColor)).
 			Foreground(lipgloss.Color("6")).
-			Padding(0, 0, 0, 1).
+			Padding(0, 1, 0, 1).
 			Margin(0, 0, 0, 0)
 
 	titleStyle = func() lipgloss.Style {

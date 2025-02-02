@@ -327,7 +327,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		textAreaStyle.Height(m.textAreaCurrentHeight)
 
 		// reduce the width of the textarea to account for the border
-		m.textarea.SetWidth(m.textAreaCurrentWidth - ReducerWidthForBorder)
+		m.textarea.SetWidth(m.textAreaCurrentWidth - ReducerWidthForBorder + 2) // TODO: fix hardcoded number
 		m.textarea.SetHeight(m.textAreaCurrentHeight)
 
 		// role list sizes
