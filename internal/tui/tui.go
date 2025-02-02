@@ -67,6 +67,11 @@ type model struct {
 type errMsg error
 type clearStatusBarMsg struct{}
 
+const (
+	// clearStatusBarAfterSeconds = 10 * time.Second
+	clearStatusBarAfterSeconds time.Duration = 10
+)
+
 func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	ta := setupTextArea()
 	vp := setupViewPort()
@@ -281,7 +286,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.statusBarMessage = msg.msg
 		}
-		return m, clearStatusBarAfter(5 * time.Second)
+		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
 
 	case saveModeFinishedMsg:
 		if msg.err != nil {
@@ -289,7 +294,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.statusBarMessage = msg.msg
 		}
-		return m, clearStatusBarAfter(5 * time.Second)
+		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
 
 	case Answer:
 		if msg.Error != nil {
@@ -310,7 +315,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewport.GotoBottom()
 		m.isLoading = false
 
-		return m, clearStatusBarAfter(5 * time.Second)
+		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
 
 		// Clear the status bar when the timer fires
 	case clearStatusBarMsg:
