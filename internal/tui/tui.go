@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"log/slog"
 
@@ -64,6 +65,7 @@ type model struct {
 }
 
 type errMsg error
+type clearStatusBarMsg struct{}
 
 func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	ta := setupTextArea()
@@ -279,7 +281,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.statusBarMessage = msg.msg
 		}
-		return m, nil
+		return m, clearStatusBarAfter(5 * time.Second)
 
 	case saveModeFinishedMsg:
 		if msg.err != nil {
@@ -287,7 +289,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		} else {
 			m.statusBarMessage = msg.msg
 		}
-		return m, nil
+		return m, clearStatusBarAfter(5 * time.Second)
 
 	case Answer:
 		if msg.Error != nil {
@@ -308,6 +310,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewport.GotoBottom()
 		m.isLoading = false
 
+		return m, clearStatusBarAfter(5 * time.Second)
+
+		// Clear the status bar when the timer fires
+	case clearStatusBarMsg:
+		m.statusBarMessage = ""
 		return m, nil
 
 	case tea.WindowSizeMsg:
@@ -440,4 +447,11 @@ func skillList(skills []assistant.Skill) []list.Item {
 func removeANSICodes(input string) string {
 	ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
 	return ansi.ReplaceAllString(input, "")
+}
+
+func clearStatusBarAfter(d time.Duration) tea.Cmd {
+	return func() tea.Msg {
+		time.Sleep(d)
+		return clearStatusBarMsg{}
+	}
 }
