@@ -280,9 +280,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case Answer:
-		if err := msg.Error; err != nil {
-			m.err = err
-			return m, nil
+		if msg.Error != nil {
+			m.statusBarMessage = fmt.Sprintf("Error fetching answer: %v", msg.Error)
+		} else {
+			m.statusBarMessage = "Answer fetched successfully"
 		}
 
 		userPrompt := m.senderStyle.Render("You: ") + m.textAreaContent
