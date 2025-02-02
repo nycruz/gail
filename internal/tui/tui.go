@@ -265,8 +265,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case copyModeFinishedMsg:
 		if msg.err != nil {
-			m.err = msg.err
-			return m, tea.Quit
+			m.statusBarMessage = fmt.Sprintf("Error entering copy mode: %v", msg.err)
+		} else {
+			m.statusBarMessage = msg.msg
 		}
 		return m, nil
 
