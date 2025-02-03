@@ -15,9 +15,9 @@ const (
 	ReducerWidth                int = 2
 	ReducerWidthForBorder       int = 2
 	ViewPortContentReducerWidth int = 4
-	TextAreaReducerHeight       int = 2
+	TextAreaReducerHeight       int = 1
 	// ViewPortReducerWidth is the amount of characters to reduce so the borders do not touch the edges of the terminal window
-	ViewPortReducerHeight int = 3
+	ViewPortReducerHeight int = 4
 
 	BoderColor = "8"
 )
@@ -49,12 +49,20 @@ var (
 	skillStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder())
 
+	statusBarStyle = lipgloss.NewStyle().
+			Border(lipgloss.NormalBorder(), false, false, false, true).
+			BorderForeground(lipgloss.Color(BoderColor)).
+			Foreground(lipgloss.Color("6")).
+			Padding(0, 1, 0, 1).
+			Margin(0, 0, 0, 0)
+
 	titleStyle = func() lipgloss.Style {
 		return lipgloss.NewStyle().Padding(0, 0).Margin(0, 0).Foreground(lipgloss.Color("6"))
 	}()
 
 	infoStyle = func() lipgloss.Style {
-		return titleStyle.Copy().Foreground(lipgloss.Color("6"))
+		ts := titleStyle
+		return ts.Foreground(lipgloss.Color("6"))
 	}()
 )
 

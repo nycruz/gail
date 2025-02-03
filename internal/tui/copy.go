@@ -10,6 +10,7 @@ import (
 )
 
 type copyModeFinishedMsg struct {
+	msg string
 	err error
 }
 
@@ -44,7 +45,9 @@ func (m model) copyModeRun(content string) tea.Cmd {
 		defer os.Remove(tmpfile.Name())
 		if err != nil {
 			m.logger.Info(fmt.Sprintf("error running editor: %s", err))
+			return copyModeFinishedMsg{err: err}
 		}
-		return copyModeFinishedMsg{err}
+
+		return copyModeFinishedMsg{msg: "Entered copy mode"}
 	})
 }

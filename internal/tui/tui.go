@@ -2,9 +2,11 @@ package tui
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
+	"time"
 
 	"log/slog"
 
@@ -40,6 +42,8 @@ type model struct {
 	helpSection     string         // Help section
 	focusOnTextArea bool           // Focus on textarea
 
+	statusBarMessage string
+
 	assistant    *assistant.Assistant // Assistant
 	isRolePrompt bool                 // Role prompt state
 	roleList     list.Model           // List for displaying roles
@@ -61,6 +65,12 @@ type model struct {
 }
 
 type errMsg error
+type clearStatusBarMsg struct{}
+
+const (
+	// clearStatusBarAfterSeconds = 10 * time.Second
+	clearStatusBarAfterSeconds time.Duration = 10
+)
 
 func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	ta := setupTextArea()
@@ -83,6 +93,7 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 		receiverStyle:   lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
 		helpSection:     h,
 		focusOnTextArea: true,
+		// statusBarMessage: "coco",
 		messagesDisplay: []string{},
 		assistant:       assistant,
 		roleList:        roles,
@@ -131,6 +142,17 @@ func (m model) View() string {
 			m.viewPortFooterView(),
 			m.textAreaHeaderView(),
 			textAreaStyle.Render(m.textarea.View()),
+		)
+	}
+
+	if m.statusBarMessage != "" {
+		return lipgloss.JoinVertical(lipgloss.Top,
+			m.viewportHeaderView(),
+			viewPortStyle.Render(m.viewport.View()),
+			m.viewPortFooterView(),
+			m.textAreaHeaderView(),
+			textAreaStyle.Render(m.textarea.View()),
+			statusBarStyle.Render(m.statusBarMessage),
 		)
 	}
 
@@ -232,7 +254,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if !ok {
 					roleSelectError := "internal error: could not select Role"
 					m.logger.Info(roleSelectError)
-					m.err = fmt.Errorf(roleSelectError)
+					m.err = errors.New(roleSelectError)
 					return m, nil
 				}
 
@@ -247,7 +269,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				if !ok {
 					skillSelectError := "internal error: could not select Skill"
 					m.logger.Info(skillSelectError)
-					m.err = fmt.Errorf(skillSelectError)
+					m.err = errors.New(skillSelectError)
 					return m, nil
 				}
 
@@ -260,15 +282,25 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case copyModeFinishedMsg:
 		if msg.err != nil {
-			m.err = msg.err
-			return m, tea.Quit
+			m.statusBarMessage = fmt.Sprintf("Error entering copy mode: %v", msg.err)
+		} else {
+			m.statusBarMessage = msg.msg
 		}
-		return m, nil
+		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
+
+	case saveModeFinishedMsg:
+		if msg.err != nil {
+			m.statusBarMessage = fmt.Sprintf("Error saving conversation: %v", msg.err)
+		} else {
+			m.statusBarMessage = msg.msg
+		}
+		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
 
 	case Answer:
-		if err := msg.Error; err != nil {
-			m.err = err
-			return m, nil
+		if msg.Error != nil {
+			m.statusBarMessage = fmt.Sprintf("Error fetching answer: %v", msg.Error)
+		} else {
+			m.statusBarMessage = msg.msg
 		}
 
 		userPrompt := m.senderStyle.Render("You: ") + m.textAreaContent
@@ -283,6 +315,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewport.GotoBottom()
 		m.isLoading = false
 
+		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
+
+		// Clear the status bar when the timer fires
+	case clearStatusBarMsg:
+		m.statusBarMessage = ""
 		return m, nil
 
 	case tea.WindowSizeMsg:
@@ -311,7 +348,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		textAreaStyle.Height(m.textAreaCurrentHeight)
 
 		// reduce the width of the textarea to account for the border
-		m.textarea.SetWidth(m.textAreaCurrentWidth - ReducerWidthForBorder)
+		m.textarea.SetWidth(m.textAreaCurrentWidth - ReducerWidthForBorder + 2) // TODO: fix hardcoded number
 		m.textarea.SetHeight(m.textAreaCurrentHeight)
 
 		// role list sizes
@@ -415,4 +452,11 @@ func skillList(skills []assistant.Skill) []list.Item {
 func removeANSICodes(input string) string {
 	ansi := regexp.MustCompile(`\x1b\[[0-9;]*[a-zA-Z]`)
 	return ansi.ReplaceAllString(input, "")
+}
+
+func clearStatusBarAfter(d time.Duration) tea.Cmd {
+	return func() tea.Msg {
+		time.Sleep(d)
+		return clearStatusBarMsg{}
+	}
 }
