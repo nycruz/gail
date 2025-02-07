@@ -37,6 +37,7 @@ type Claude struct {
 type MessageRequest struct {
 	Model     string    `json:"model"`
 	MaxTokens int       `json:"max_tokens"`
+	System    string    `json:"system"`
 	Messages  []Message `json:"messages"`
 }
 
@@ -88,21 +89,17 @@ func (c *Claude) Prompt(ctx context.Context, roleName string, rolePersona string
 	if rolePersona != c.currentRolePersona || skillInstruction != c.currentSkillInstruction {
 		c.currentRolePersona = rolePersona
 		c.currentSkillInstruction = skillInstruction
-
-		c.messages = append(c.messages, Message{
-			Role:    "user",
-			Content: fmt.Sprintf("%s. %s. %s", c.currentRolePersona, c.currentSkillInstruction, message),
-		})
-	} else {
-		c.messages = append(c.messages, Message{
-			Role:    "user",
-			Content: message,
-		})
 	}
+
+	c.messages = append(c.messages, Message{
+		Role:    "user",
+		Content: message,
+	})
 
 	messageRequest := MessageRequest{
 		Model:     string(c.Model),
 		MaxTokens: int(c.MaxTokens),
+		System:    fmt.Sprintf("%s. %s", c.currentRolePersona, c.currentSkillInstruction),
 		Messages:  c.messages,
 	}
 
