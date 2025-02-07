@@ -38,11 +38,11 @@ var (
 	fadedStyle = lipgloss.NewStyle().
 			Foreground(lipgloss.Color(BorderColor))
 
-	spinnerStyle = lipgloss.NewStyle().
-			Foreground(lipgloss.Color(TextHighlightColor)).
-			Border(lipgloss.HiddenBorder()).
-			Padding(0, 0).
-			Margin(0, 0, 0, 0)
+	// spinnerStyle = lipgloss.NewStyle().
+	// 		Foreground(lipgloss.Color(TextHighlightColor)).
+	// 		Border(lipgloss.HiddenBorder()).
+	// 		Padding(0, 0).
+	// 		Margin(0, 0, 0, 0)
 
 	roleStyle = lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder())
@@ -67,7 +67,7 @@ var (
 	}()
 )
 
-func max(a, b int) int {
+func getMax(a, b int) int {
 	if a > b {
 		return a
 	}
@@ -84,8 +84,8 @@ func (m model) viewportHeaderView() string {
 	titleWidth := lipgloss.Width(title)
 	leftBorderWidth := (m.viewportCurrentWidth - titleWidth) / 2
 	rightBorderWidth := m.viewportCurrentWidth - titleWidth - leftBorderWidth
-	leftBorder := strings.Repeat("─", max(0, leftBorderWidth))
-	rightBorder := strings.Repeat("─", max(0, rightBorderWidth))
+	leftBorder := strings.Repeat("─", getMax(0, leftBorderWidth))
+	rightBorder := strings.Repeat("─", getMax(0, rightBorderWidth))
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Center,
@@ -105,7 +105,7 @@ func (m model) viewPortFooterView() string {
 
 	modelName := infoStyle.Foreground(lipgloss.Color(BorderColor)).Render(m.llm.GetModel())
 	scrollPercent := infoStyle.Render(fmt.Sprintf("%3.f%%", m.viewport.ScrollPercent()*100))
-	borderLines := strings.Repeat("─", max(0, m.viewportCurrentWidth-lipgloss.Width(scrollPercent)-lipgloss.Width(modelName)))
+	borderLines := strings.Repeat("─", getMax(0, m.viewportCurrentWidth-lipgloss.Width(scrollPercent)-lipgloss.Width(modelName)))
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Center,
@@ -125,8 +125,8 @@ func (m model) textAreaHeaderView() string {
 	titleWidth := lipgloss.Width(title)
 	leftBorderWidth := (m.textAreaCurrentWidth - titleWidth) / 2
 	rightBorderWidth := m.textAreaCurrentWidth - titleWidth - leftBorderWidth
-	leftBorder := strings.Repeat("─", max(0, leftBorderWidth))
-	rightBorder := strings.Repeat("─", max(0, rightBorderWidth))
+	leftBorder := strings.Repeat("─", getMax(0, leftBorderWidth))
+	rightBorder := strings.Repeat("─", getMax(0, rightBorderWidth))
 
 	return lipgloss.JoinHorizontal(
 		lipgloss.Center,
