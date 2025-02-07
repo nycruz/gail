@@ -306,7 +306,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		userPrompt := m.senderStyle.Render("You: ") + m.textAreaContent
 		userPrompt = wordwrap.String(userPrompt, m.viewportCurrentWidth-ReducerWidthForBorder)
 
-		gailPrompt := m.receiverStyle.Render(fmt.Sprintf("\nGail (%s - %s): ", m.role.Name, m.skill.ID)) + msg.Answer + "\n"
+		gailPrompt := m.receiverStyle.Render("\nGail: ") + msg.Answer + "\n"
 		gailPrompt = wordwrap.String(gailPrompt, m.viewportCurrentWidth-ReducerWidthForBorder)
 
 		m.messagesDisplay = append(m.messagesDisplay, userPrompt, gailPrompt)
