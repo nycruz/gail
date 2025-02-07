@@ -36,7 +36,7 @@ func (m model) fetchAnswer(roleName string, rolePersona string, skillInstruction
 			return Answer{Error: err}
 		}
 
-		return Answer{Answer: highlightedAnswer, msg: fmt.Sprintf("Answer fetched successfully as a %s!", roleName)}
+		return Answer{Answer: highlightedAnswer, msg: fmt.Sprintf("Answered as a %s!", roleName)}
 	}
 }
 
