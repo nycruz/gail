@@ -115,7 +115,7 @@ func (m model) Init() tea.Cmd {
 
 func (m model) View() string {
 	if err := m.err; err != nil {
-		return err.Error()
+		m.statusBarMessage = fmt.Sprintf("Error: %v", err)
 	}
 
 	if m.isRolePrompt {
@@ -127,11 +127,11 @@ func (m model) View() string {
 	}
 
 	if m.focusOnTextArea {
-		textAreaStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
-		viewPortStyle.BorderForeground(lipgloss.Color(BorderColor))
+		textAreaStyle = textAreaStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
+		viewPortStyle = viewPortStyle.BorderForeground(lipgloss.Color(BorderColor))
 	} else {
-		viewPortStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
-		textAreaStyle.BorderForeground(lipgloss.Color(BorderColor))
+		viewPortStyle = viewPortStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
+		textAreaStyle = textAreaStyle.BorderForeground(lipgloss.Color(BorderColor))
 	}
 
 	if m.isLoading {
