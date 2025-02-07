@@ -68,8 +68,8 @@ type errMsg error
 type clearStatusBarMsg struct{}
 
 const (
-	// clearStatusBarAfterSeconds = 10 * time.Second
 	clearStatusBarAfterSeconds time.Duration = 10
+	defaultStatusMessage       string        = "'tab':send, 'Esc':quit, 'ctrl+r':pick role, 'ctrl+e':pick skill, 'ctrl+s':save conversation, 'ctrl+y':copy mode"
 )
 
 func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
@@ -93,7 +93,7 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 		receiverStyle:    lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
 		helpSection:      h,
 		focusOnTextArea:  true,
-		statusBarMessage: "'tab':send, 'Esc':quit, 'ctrl+r':pick role, 'ctrl+e':pick skill, 'ctrl+s':save conversation, 'ctrl+y':copy mode",
+		statusBarMessage: defaultStatusMessage,
 		messagesDisplay:  []string{},
 		assistant:        assistant,
 		roleList:         roles,
@@ -307,9 +307,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
 
-		// Clear the status bar when the timer fires
+	// Clear the status bar when the timer fires
 	case clearStatusBarMsg:
-		m.statusBarMessage = ""
+		m.statusBarMessage = defaultStatusMessage
 		return m, nil
 
 	case tea.WindowSizeMsg:
