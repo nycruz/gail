@@ -76,7 +76,7 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	ta := setupTextArea()
 	vp := setupViewPort()
 	s := setupSpinner()
-	h := fadedStyle.Render("'tab' to send, 'Esc' to quit, 'ctrl+r' to pick a role, 'ctrl+e' to pick a skill, 'ctrl+s' to save a conversation, 'ctrl+y' to enter copy mode")
+	h := fadedStyle.Render("Type here...")
 
 	roles := setupRoles(assistant.Roles)
 	defaultRole := assistant.DefaultRole()
@@ -85,26 +85,26 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	defaultSkill := assistant.DefaultSkill()
 
 	return model{
-		textarea:        ta,
-		viewport:        vp,
-		spinner:         s,
-		isLoading:       false,
-		senderStyle:     lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
-		receiverStyle:   lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
-		helpSection:     h,
-		focusOnTextArea: true,
-		// statusBarMessage: "coco",
-		messagesDisplay: []string{},
-		assistant:       assistant,
-		roleList:        roles,
-		isRolePrompt:    false,
-		role:            defaultRole,
-		skillList:       skills,
-		isSkillPrompt:   false,
-		skill:           defaultSkill,
-		llm:             mdl,
-		logger:          logger,
-		err:             nil,
+		textarea:         ta,
+		viewport:         vp,
+		spinner:          s,
+		isLoading:        false,
+		senderStyle:      lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
+		receiverStyle:    lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
+		helpSection:      h,
+		focusOnTextArea:  true,
+		statusBarMessage: "'tab':send, 'Esc':quit, 'ctrl+r':pick role, 'ctrl+e':pick skill, 'ctrl+s':save conversation, 'ctrl+y':copy mode",
+		messagesDisplay:  []string{},
+		assistant:        assistant,
+		roleList:         roles,
+		isRolePrompt:     false,
+		role:             defaultRole,
+		skillList:        skills,
+		isSkillPrompt:    false,
+		skill:            defaultSkill,
+		llm:              mdl,
+		logger:           logger,
+		err:              nil,
 	}
 }
 
@@ -127,10 +127,10 @@ func (m model) View() string {
 	}
 
 	if m.focusOnTextArea {
-		textAreaStyle.BorderForeground(lipgloss.Color("6"))
+		textAreaStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
 		viewPortStyle.BorderForeground(lipgloss.Color(BorderColor))
 	} else {
-		viewPortStyle.BorderForeground(lipgloss.Color("6"))
+		viewPortStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
 		textAreaStyle.BorderForeground(lipgloss.Color(BorderColor))
 	}
 
@@ -144,17 +144,6 @@ func (m model) View() string {
 			statusBarStyle.Render(fmt.Sprintf("%s thinking...", m.spinner.View())),
 		)
 	}
-
-	// if m.statusBarMessage != "" {
-	// 	return lipgloss.JoinVertical(lipgloss.Top,
-	// 		m.viewportHeaderView(),
-	// 		viewPortStyle.Render(m.viewport.View()),
-	// 		m.viewPortFooterView(),
-	// 		m.textAreaHeaderView(),
-	// 		textAreaStyle.Render(m.textarea.View()),
-	// 		statusBarStyle.Render(m.statusBarMessage),
-	// 	)
-	// }
 
 	return lipgloss.JoinVertical(lipgloss.Top,
 		m.viewportHeaderView(),
@@ -352,6 +341,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.textarea.SetWidth(m.textAreaCurrentWidth - ReducerWidthForBorder + 2) // TODO: fix hardcoded number
 		m.textarea.SetHeight(m.textAreaCurrentHeight)
 
+		// status bar sizes
+		statusBarStyle.Width(m.textAreaCurrentWidth)
+
 		// role list sizes
 		roleStyle.Width(msg.Width - ReducerWidth)
 		roleStyle.Height(viewportHeightWithBorder)
@@ -379,7 +371,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func setupTextArea() textarea.Model {
 	ta := textarea.New()
-	ta.Placeholder = "Press 'Tab' to send, 'Esc' to quit, 'Shift+Tab' to switch pane, 'Ctrl+r' to pick a Role, 'Ctrl+e' to pick a Skill, 'Ctrl+s' to save a conversation, 'Ctrl+y' to enter copy mode"
+	ta.Placeholder = "Type here..."
 	ta.CharLimit = 0
 	ta.ShowLineNumbers = false
 	ta.KeyMap.InsertNewline.SetEnabled(true)

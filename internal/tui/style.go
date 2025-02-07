@@ -58,7 +58,7 @@ var (
 			Margin(0, 0, 0, 0)
 
 	titleStyle = func() lipgloss.Style {
-		return lipgloss.NewStyle().Padding(0, 0).Margin(0, 0).Foreground(lipgloss.Color("6"))
+		return lipgloss.NewStyle().Padding(0, 0).Margin(0, 0).Foreground(lipgloss.Color(TextHighlightColor))
 	}()
 
 	infoStyle = func() lipgloss.Style {
@@ -77,7 +77,7 @@ func max(a, b int) int {
 func (m model) viewportHeaderView() string {
 	l := lipgloss.NewStyle().Foreground(lipgloss.Color(BorderColor))
 	if !m.focusOnTextArea {
-		l.Foreground(lipgloss.Color("6"))
+		l.Foreground(lipgloss.Color(TextHighlightColor))
 	}
 
 	title := titleStyle.Render(fmt.Sprintf(" %s ", m.llm.GetUser()))
@@ -100,7 +100,7 @@ func (m model) viewportHeaderView() string {
 func (m model) viewPortFooterView() string {
 	l := lipgloss.NewStyle().Foreground(lipgloss.Color(BorderColor))
 	if !m.focusOnTextArea {
-		l.Foreground(lipgloss.Color("6"))
+		l.Foreground(lipgloss.Color(TextHighlightColor))
 	}
 
 	modelName := infoStyle.Foreground(lipgloss.Color(BorderColor)).Render(m.llm.GetModel())
@@ -119,7 +119,7 @@ func (m model) viewPortFooterView() string {
 func (m model) textAreaHeaderView() string {
 	l := lipgloss.NewStyle().Foreground(lipgloss.Color(BorderColor))
 	if m.focusOnTextArea {
-		l.Foreground(lipgloss.Color("6"))
+		l.Foreground(lipgloss.Color(TextHighlightColor))
 	}
 	title := titleStyle.Render(" Prompt ")
 	titleWidth := lipgloss.Width(title)
