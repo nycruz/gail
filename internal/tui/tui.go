@@ -128,10 +128,10 @@ func (m model) View() string {
 
 	if m.focusOnTextArea {
 		textAreaStyle.BorderForeground(lipgloss.Color("6"))
-		viewPortStyle.BorderForeground(lipgloss.Color(BoderColor))
+		viewPortStyle.BorderForeground(lipgloss.Color(BorderColor))
 	} else {
 		viewPortStyle.BorderForeground(lipgloss.Color("6"))
-		textAreaStyle.BorderForeground(lipgloss.Color(BoderColor))
+		textAreaStyle.BorderForeground(lipgloss.Color(BorderColor))
 	}
 
 	if m.isLoading {
