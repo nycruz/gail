@@ -68,15 +68,15 @@ type errMsg error
 type clearStatusBarMsg struct{}
 
 const (
-	// clearStatusBarAfterSeconds = 10 * time.Second
 	clearStatusBarAfterSeconds time.Duration = 10
+	defaultStatusMessage       string        = "'tab':send, 'Esc':quit, 'ctrl+r':pick role, 'ctrl+e':pick skill, 'ctrl+s':save conversation, 'ctrl+y':copy mode"
 )
 
 func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	ta := setupTextArea()
 	vp := setupViewPort()
 	s := setupSpinner()
-	h := fadedStyle.Render("'tab' to send, 'Esc' to quit, 'ctrl+r' to pick a role, 'ctrl+e' to pick a skill, 'ctrl+s' to save a conversation, 'ctrl+y' to enter copy mode")
+	h := fadedStyle.Render("Type here...")
 
 	roles := setupRoles(assistant.Roles)
 	defaultRole := assistant.DefaultRole()
@@ -85,26 +85,26 @@ func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
 	defaultSkill := assistant.DefaultSkill()
 
 	return model{
-		textarea:        ta,
-		viewport:        vp,
-		spinner:         s,
-		isLoading:       false,
-		senderStyle:     lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
-		receiverStyle:   lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
-		helpSection:     h,
-		focusOnTextArea: true,
-		// statusBarMessage: "coco",
-		messagesDisplay: []string{},
-		assistant:       assistant,
-		roleList:        roles,
-		isRolePrompt:    false,
-		role:            defaultRole,
-		skillList:       skills,
-		isSkillPrompt:   false,
-		skill:           defaultSkill,
-		llm:             mdl,
-		logger:          logger,
-		err:             nil,
+		textarea:         ta,
+		viewport:         vp,
+		spinner:          s,
+		isLoading:        false,
+		senderStyle:      lipgloss.NewStyle().Foreground(lipgloss.Color("5")),
+		receiverStyle:    lipgloss.NewStyle().Foreground(lipgloss.Color("6")),
+		helpSection:      h,
+		focusOnTextArea:  true,
+		statusBarMessage: defaultStatusMessage,
+		messagesDisplay:  []string{},
+		assistant:        assistant,
+		roleList:         roles,
+		isRolePrompt:     false,
+		role:             defaultRole,
+		skillList:        skills,
+		isSkillPrompt:    false,
+		skill:            defaultSkill,
+		llm:              mdl,
+		logger:           logger,
+		err:              nil,
 	}
 }
 
@@ -115,7 +115,7 @@ func (m model) Init() tea.Cmd {
 
 func (m model) View() string {
 	if err := m.err; err != nil {
-		return err.Error()
+		m.statusBarMessage = fmt.Sprintf("Error: %v", err)
 	}
 
 	if m.isRolePrompt {
@@ -127,33 +127,15 @@ func (m model) View() string {
 	}
 
 	if m.focusOnTextArea {
-		textAreaStyle.BorderForeground(lipgloss.Color("6"))
-		viewPortStyle.BorderForeground(lipgloss.Color(BoderColor))
+		textAreaStyle = textAreaStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
+		viewPortStyle = viewPortStyle.BorderForeground(lipgloss.Color(BorderColor))
 	} else {
-		viewPortStyle.BorderForeground(lipgloss.Color("6"))
-		textAreaStyle.BorderForeground(lipgloss.Color(BoderColor))
+		viewPortStyle = viewPortStyle.BorderForeground(lipgloss.Color(TextHighlightColor))
+		textAreaStyle = textAreaStyle.BorderForeground(lipgloss.Color(BorderColor))
 	}
 
 	if m.isLoading {
-		m.viewport.SetContent(spinnerStyle.Render(fmt.Sprintf("%s thinking...", m.spinner.View())))
-		return lipgloss.JoinVertical(lipgloss.Top,
-			m.viewportHeaderView(),
-			viewPortStyle.Render(m.viewport.View()),
-			m.viewPortFooterView(),
-			m.textAreaHeaderView(),
-			textAreaStyle.Render(m.textarea.View()),
-		)
-	}
-
-	if m.statusBarMessage != "" {
-		return lipgloss.JoinVertical(lipgloss.Top,
-			m.viewportHeaderView(),
-			viewPortStyle.Render(m.viewport.View()),
-			m.viewPortFooterView(),
-			m.textAreaHeaderView(),
-			textAreaStyle.Render(m.textarea.View()),
-			statusBarStyle.Render(m.statusBarMessage),
-		)
+		m.statusBarMessage = fmt.Sprintf("%s thinking...", m.spinner.View())
 	}
 
 	return lipgloss.JoinVertical(lipgloss.Top,
@@ -162,6 +144,7 @@ func (m model) View() string {
 		m.viewPortFooterView(),
 		m.textAreaHeaderView(),
 		textAreaStyle.Render(m.textarea.View()),
+		statusBarStyle.Render(m.statusBarMessage),
 	)
 }
 
@@ -317,9 +300,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
 
-		// Clear the status bar when the timer fires
+	// Clear the status bar when the timer fires
 	case clearStatusBarMsg:
-		m.statusBarMessage = ""
+		m.statusBarMessage = defaultStatusMessage
 		return m, nil
 
 	case tea.WindowSizeMsg:
@@ -351,6 +334,9 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.textarea.SetWidth(m.textAreaCurrentWidth - ReducerWidthForBorder + 2) // TODO: fix hardcoded number
 		m.textarea.SetHeight(m.textAreaCurrentHeight)
 
+		// status bar sizes
+		statusBarStyle.Width(m.textAreaCurrentWidth)
+
 		// role list sizes
 		roleStyle.Width(msg.Width - ReducerWidth)
 		roleStyle.Height(viewportHeightWithBorder)
@@ -378,7 +364,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func setupTextArea() textarea.Model {
 	ta := textarea.New()
-	ta.Placeholder = "Press 'Tab' to send, 'Esc' to quit, 'Shift+Tab' to switch pane, 'Ctrl+r' to pick a Role, 'Ctrl+e' to pick a Skill, 'Ctrl+s' to save a conversation, 'Ctrl+y' to enter copy mode"
+	ta.Placeholder = "Type here..."
 	ta.CharLimit = 0
 	ta.ShowLineNumbers = false
 	ta.KeyMap.InsertNewline.SetEnabled(true)
