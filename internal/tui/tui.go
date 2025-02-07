@@ -135,13 +135,13 @@ func (m model) View() string {
 	}
 
 	if m.isLoading {
-		m.viewport.SetContent(spinnerStyle.Render(fmt.Sprintf("%s thinking...", m.spinner.View())))
 		return lipgloss.JoinVertical(lipgloss.Top,
 			m.viewportHeaderView(),
 			viewPortStyle.Render(m.viewport.View()),
 			m.viewPortFooterView(),
 			m.textAreaHeaderView(),
 			textAreaStyle.Render(m.textarea.View()),
+			statusBarStyle.Render(fmt.Sprintf("%s thinking...", m.spinner.View())),
 		)
 	}
 
