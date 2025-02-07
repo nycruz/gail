@@ -145,16 +145,16 @@ func (m model) View() string {
 		)
 	}
 
-	if m.statusBarMessage != "" {
-		return lipgloss.JoinVertical(lipgloss.Top,
-			m.viewportHeaderView(),
-			viewPortStyle.Render(m.viewport.View()),
-			m.viewPortFooterView(),
-			m.textAreaHeaderView(),
-			textAreaStyle.Render(m.textarea.View()),
-			statusBarStyle.Render(m.statusBarMessage),
-		)
-	}
+	// if m.statusBarMessage != "" {
+	// 	return lipgloss.JoinVertical(lipgloss.Top,
+	// 		m.viewportHeaderView(),
+	// 		viewPortStyle.Render(m.viewport.View()),
+	// 		m.viewPortFooterView(),
+	// 		m.textAreaHeaderView(),
+	// 		textAreaStyle.Render(m.textarea.View()),
+	// 		statusBarStyle.Render(m.statusBarMessage),
+	// 	)
+	// }
 
 	return lipgloss.JoinVertical(lipgloss.Top,
 		m.viewportHeaderView(),
@@ -162,6 +162,7 @@ func (m model) View() string {
 		m.viewPortFooterView(),
 		m.textAreaHeaderView(),
 		textAreaStyle.Render(m.textarea.View()),
+		statusBarStyle.Render(m.statusBarMessage),
 	)
 }
 

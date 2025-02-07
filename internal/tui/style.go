@@ -17,7 +17,7 @@ const (
 	ViewPortContentReducerWidth int = 4
 	TextAreaReducerHeight       int = 1
 	// ViewPortReducerWidth is the amount of characters to reduce so the borders do not touch the edges of the terminal window
-	ViewPortReducerHeight int = 4
+	ViewPortReducerHeight int = 5
 
 	BoderColor = "8"
 )
