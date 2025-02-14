@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -23,8 +24,18 @@ func (m model) saveConversation(content string) tea.Cmd {
 			return saveModeFinishedMsg{err: err}
 		}
 
+		contentFirstLine := strings.Split(content, "\n")[0]
+		fileTitle := contentFirstLine
+		if len(contentFirstLine) > 30 {
+			fileTitle = contentFirstLine[:30]
+		}
+
+		fileTitle = strings.ReplaceAll(fileTitle, " ", "_")
+		fileTitle = strings.ReplaceAll(fileTitle, "You:", "")
+		fileTitle = strings.ReplaceAll(fileTitle, "?", "")
+
 		now := time.Now()
-		filename := fmt.Sprintf("conversation_%s.txt", now.Format("2006-01-02-15-04-05"))
+		filename := fmt.Sprintf("conversation_%s_%s.txt", now.Format("2006-01-02-15-04-05"), fileTitle)
 		path := fmt.Sprintf("%s/%s", historyDir, filename)
 
 		err = os.WriteFile(path, []byte(content), 0644)
