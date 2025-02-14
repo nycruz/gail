@@ -27,6 +27,7 @@ type Role struct {
 type Skill struct {
 	ID          string   `mapstructure:"id"`
 	Instruction string   `mapstructure:"instruction"`
+	Description string   `mapstructure:"description"`
 	RoleIDs     []string `mapstructure:"roleIDs"`
 }
 
