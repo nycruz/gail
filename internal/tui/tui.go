@@ -429,6 +429,7 @@ func skillList(skills []assistant.Skill) []list.Item {
 		skillItems = append(skillItems, SkillItem{
 			id:          skill.ID,
 			instruction: skill.Instruction,
+			description: skill.Description,
 		})
 	}
 

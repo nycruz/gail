@@ -3,6 +3,7 @@ package tui
 type SkillItem struct {
 	id          string
 	instruction string
+	description string
 }
 
 // implement the list.Item interface
@@ -12,7 +13,7 @@ func (i SkillItem) Title() string {
 
 // implement the list.Item interface
 func (i SkillItem) Description() string {
-	return ""
+	return i.description
 }
 
 // implement the list.Item interface
