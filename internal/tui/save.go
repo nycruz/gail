@@ -24,25 +24,29 @@ func (m model) saveConversation(content string) tea.Cmd {
 			return saveModeFinishedMsg{err: err}
 		}
 
-		contentFirstLine := strings.Split(content, "\n")[0]
-		fileTitle := contentFirstLine
-		if len(contentFirstLine) > 30 {
-			fileTitle = contentFirstLine[:30]
-		}
-
-		fileTitle = strings.ReplaceAll(fileTitle, " ", "_")
-		fileTitle = strings.ReplaceAll(fileTitle, "You:", "")
-		fileTitle = strings.ReplaceAll(fileTitle, "?", "")
-
-		now := time.Now()
-		filename := fmt.Sprintf("conversation_%s_%s.txt", now.Format("2006-01-02-15-04-05"), fileTitle)
+		filename := getFileName(content)
 		path := fmt.Sprintf("%s/%s", historyDir, filename)
-
 		err = os.WriteFile(path, []byte(content), 0644)
 		if err != nil {
 			return saveModeFinishedMsg{err: err}
 		}
 
-		return saveModeFinishedMsg{msg: fmt.Sprintf("Conversation saved to %s", path)}
+		return saveModeFinishedMsg{msg: fmt.Sprintf("Conversation saved in %s", path)}
 	}
+}
+
+func getFileName(content string) string {
+	contentFirstLine := strings.Split(content, "\n")[0]
+	fileTitle := contentFirstLine
+	if len(contentFirstLine) > 30 {
+		fileTitle = contentFirstLine[:30]
+	}
+
+	fileTitle = strings.ReplaceAll(fileTitle, "You:", "")
+	fileTitle = strings.ReplaceAll(fileTitle, " ", "_")
+
+	now := time.Now().Format("2006-01-02-15-04-05")
+	filename := fmt.Sprintf("%s_%s.txt", now, fileTitle)
+
+	return filename
 }
