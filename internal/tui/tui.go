@@ -69,7 +69,7 @@ type clearStatusBarMsg struct{}
 
 const (
 	clearStatusBarAfterSeconds time.Duration = 10
-	defaultStatusMessage       string        = "'tab':send, 'Esc':quit, 'ctrl+r':pick role, 'ctrl+e':pick skill, 'ctrl+s':save conversation, 'ctrl+y':copy mode"
+	defaultStatusMessage       string        = "'ctrl-q':quit, 'ctrl+s':send, 'ctrl+r':pick role, 'ctrl+k':pick skill, 'ctrl+d':save conversation, 'ctrl+c':copy conversation"
 )
 
 func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
@@ -177,7 +177,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 
 		switch msg.Type {
-		case tea.KeyCtrlC, tea.KeyEsc:
+		case tea.KeyCtrlQ:
 			return m, tea.Quit
 
 		case tea.KeyShiftTab:
@@ -197,7 +197,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
-		case tea.KeyTab:
+		case tea.KeyCtrlS:
 			m.textAreaContent = m.textarea.Value()
 			m.textarea.Reset()
 			m.textarea.Blur()
@@ -213,7 +213,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.textarea.Blur()
 			m.focusOnTextArea = false
 
-		case tea.KeyCtrlE:
+		case tea.KeyCtrlK:
 			m.isSkillPrompt = true
 			m.textarea.Blur()
 			m.focusOnTextArea = false
@@ -223,11 +223,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, m.skillList.SetItems(skillItems)
 
-		case tea.KeyCtrlY:
+		case tea.KeyCtrlC:
 			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
 			return m, m.copyModeRun(unformmatedAnswer)
 
-		case tea.KeyCtrlS:
+		case tea.KeyCtrlD:
 			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
 			return m, m.saveConversation(unformmatedAnswer)
 

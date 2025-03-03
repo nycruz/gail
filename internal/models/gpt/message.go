@@ -128,7 +128,7 @@ func (gpt *GPT) getResponse(ctx context.Context) (string, error) {
 
 	var msr MessagesResponse
 	if err := json.NewDecoder(resp.Body).Decode(&msr); err != nil {
-		return "", fmt.Errorf("", err)
+		return "", fmt.Errorf("unable to decode message response: %w", err)
 	}
 
 	response := msr.Data[0].Content[0].Text.Value
