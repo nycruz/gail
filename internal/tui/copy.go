@@ -15,7 +15,7 @@ type copyModeFinishedMsg struct {
 }
 
 func (m model) copyModeRun(content string) tea.Cmd {
-	tmpfile, err := os.CreateTemp("", "tui-*.txt")
+	tmpfile, err := os.CreateTemp("", "tui-*.md")
 	if err != nil {
 		m.logger.Info(fmt.Sprintf("error creating temp file: %s", err))
 		log.Fatal(err)

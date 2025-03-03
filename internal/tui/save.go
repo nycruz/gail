@@ -24,7 +24,7 @@ func (m model) saveConversation(content string) tea.Cmd {
 			return saveModeFinishedMsg{err: err}
 		}
 
-		filename := getFileName(content)
+		filename := createFileName(content)
 		path := fmt.Sprintf("%s/%s", historyDir, filename)
 		err = os.WriteFile(path, []byte(content), 0644)
 		if err != nil {
@@ -35,7 +35,7 @@ func (m model) saveConversation(content string) tea.Cmd {
 	}
 }
 
-func getFileName(content string) string {
+func createFileName(content string) string {
 	contentFirstLine := strings.Split(content, "\n")[0]
 	fileTitle := contentFirstLine
 	if len(contentFirstLine) > 30 {
@@ -46,7 +46,7 @@ func getFileName(content string) string {
 	fileTitle = strings.ReplaceAll(fileTitle, " ", "_")
 
 	now := time.Now().Format("2006-01-02-15-04-05")
-	filename := fmt.Sprintf("%s_%s.txt", now, fileTitle)
+	filename := fmt.Sprintf("%s_%s.md", now, fileTitle)
 
 	return filename
 }
