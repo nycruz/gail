@@ -69,7 +69,7 @@ type clearStatusBarMsg struct{}
 
 const (
 	clearStatusBarAfterSeconds time.Duration = 10
-	defaultStatusMessage       string        = "'ctrl-q':quit, 'ctrl+s':send, 'ctrl+r':pick role, 'ctrl+k':pick skill, 'ctrl+d':save conversation, 'ctrl+c':copy conversation"
+	defaultStatusMessage       string        = "'ctrl-q':quit, 'ctrl+s':send, 'ctrl+r':pick role, 'ctrl+e':pick skill, 'ctrl+d':save conversation, 'ctrl+c':copy conversation"
 )
 
 func New(logger *slog.Logger, mdl LLM, assistant *assistant.Assistant) model {
@@ -213,7 +213,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.textarea.Blur()
 			m.focusOnTextArea = false
 
-		case tea.KeyCtrlK:
+		case tea.KeyCtrlE:
 			m.isSkillPrompt = true
 			m.textarea.Blur()
 			m.focusOnTextArea = false
