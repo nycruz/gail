@@ -30,8 +30,10 @@ type GPT struct {
 	currentRolePersona string
 	// The current instruction used for the chat completion.
 	currentSkillInstruction string
-	validator               *validator.Validator
-	Logger                  *slog.Logger
+	// The validator used to validate the input message.
+	validator *validator.Validator
+	// The logger used for logging messages.
+	Logger *slog.Logger
 }
 
 func New(logger *slog.Logger, apiKey string, model models.Model, maxTokens models.Token, user string, validator *validator.Validator) (*GPT, error) {

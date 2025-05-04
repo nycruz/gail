@@ -20,10 +20,6 @@ type GPTO struct {
 	MaxTokens models.Token
 	// The OpenAI API key used for authentication.
 	apiKey string
-	// The current persona used for the chat completion.
-	currentRolePersona string
-	// The current instruction used for the chat completion.
-	currentSkillInstruction string
 	// The validator used to validate the input message.
 	validator *validator.Validator
 	// The logger used for logging messages.
@@ -32,14 +28,12 @@ type GPTO struct {
 
 func New(logger *slog.Logger, apiKey string, model models.Model, maxTokens models.Token, user string, validator *validator.Validator) (*GPTO, error) {
 	gpto := &GPTO{
-		Model:                   model,
-		User:                    user,
-		apiKey:                  apiKey,
-		MaxTokens:               maxTokens,
-		currentRolePersona:      "",
-		currentSkillInstruction: "",
-		validator:               validator,
-		Logger:                  logger,
+		Model:     model,
+		User:      user,
+		apiKey:    apiKey,
+		MaxTokens: maxTokens,
+		validator: validator,
+		Logger:    logger,
 	}
 
 	return gpto, nil
@@ -51,7 +45,7 @@ func (gpto *GPTO) Prompt(ctx context.Context, roleName string, rolePersona strin
 		return validationMsg, nil
 	}
 
-	response, err := gpto.response(ctx, rolePersona, skillInstruction, message, "medium")
+	response, err := gpto.response(ctx, rolePersona, skillInstruction, message, "high")
 	if err != nil {
 		return "", fmt.Errorf("failed to get OpenAI's response: %w", err)
 	}
