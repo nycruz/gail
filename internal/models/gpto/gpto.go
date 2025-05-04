@@ -53,12 +53,10 @@ func (gpto *GPTO) Prompt(ctx context.Context, roleName string, rolePersona strin
 	return response, nil
 }
 
-// GetModel returns the model used for the chat completion.
 func (gpto *GPTO) GetModel() string {
 	return string(gpto.Model)
 }
 
-// GetUser returns the user used for the chat completion.
 func (gpto *GPTO) GetUser() string {
 	return gpto.User
 }
