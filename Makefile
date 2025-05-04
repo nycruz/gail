@@ -1,20 +1,16 @@
-run:
+run: # Run the project
 	go run *.go
 
-build:
+build: # Build the project
 	go build -o ./bin/gail *.go
 
-dev-gpt:
+dev-gpt: # Run ChatGPT standard model
 	go run *.go --model=gpt
 
-dev-claude:
+dev-gpt-o: # Run ChatGPT o-series model
+	go run *.go --model=gpt-o
+
+dev-claude: # Run Claude standard model
 	go run *.go --model=claude
 
-# dev-gpt-o1:
-# 	go run *.go --model=gpt-o1
-#
-# dev-gpt-o1-mini:
-# 	go run *.go --model=gpt-o1-mini
-
-
-.PHONY: all test clean run dev-gpt dev-claude dev-gpto1 dev-gpto1-mini
+.PHONY: run build dev-gpt dev-gpt-o dev-claude

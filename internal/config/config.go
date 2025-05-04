@@ -68,6 +68,13 @@ func selectModelConfig(modelFlag string) (models.Model, models.Token, string, er
 		if apiKey == "" {
 			return modelName, maxTokens, apiKey, fmt.Errorf("environment variable '%s' not set for model '%s'", envOpenAIAPIKey, models.ModelGPT)
 		}
+	case models.ModelGPTo:
+		modelName = models.ModelGPToName
+		maxTokens = models.ModelGPToMaxTokens
+		apiKey = os.Getenv(envOpenAIAPIKey)
+		if apiKey == "" {
+			return modelName, maxTokens, apiKey, fmt.Errorf("environment variable '%s' not set for model '%s'", envOpenAIAPIKey, models.ModelGPTo)
+		}
 	default:
 		return modelName, maxTokens, apiKey, fmt.Errorf("invalid model flag '%s'. Use one of ['%s', '%s']", modelFlag, models.ModelClaude, models.ModelGPT)
 	}
