@@ -13,6 +13,7 @@ import (
 	"github.com/nycruz/gail/internal/models"
 	"github.com/nycruz/gail/internal/models/claude"
 	"github.com/nycruz/gail/internal/models/gpt"
+	"github.com/nycruz/gail/internal/models/gpto"
 	"github.com/nycruz/gail/internal/tui"
 	"github.com/nycruz/gail/internal/validator"
 )
@@ -24,7 +25,7 @@ const (
 )
 
 func main() {
-	modelFlag := flag.String("model", "gpt", "The model to use for the chat completion (e.g. gpt, claude)")
+	modelFlag := flag.String("model", "gpt", "The model to use for the chat completion (e.g. gpt, gpt-o, claude)")
 	logLevelFlag := flag.String("log-level", "info", "The log level to use for troubleshooting (e.g. debug, info, warn, error)")
 	flag.Parse()
 
@@ -74,6 +75,11 @@ func main() {
 		llm, err = gpt.New(logger, cfg.ModelAPIKey, cfg.Model, cfg.ModelMaxToken, AppName, validator)
 		if err != nil {
 			log.Fatalf("ERROR: failed to instantiate 'ChatGPT' model: %v", err)
+		}
+	case models.ModelGPToName:
+		llm, err = gpto.New(logger, cfg.ModelAPIKey, cfg.Model, cfg.ModelMaxToken, AppName, validator)
+		if err != nil {
+			log.Fatalf("ERROR: failed to instantiate 'ChatGPT-o' model: %v", err)
 		}
 	case models.ModelClaudeName:
 		llm, err = claude.New(logger, cfg.ModelAPIKey, cfg.Model, cfg.ModelMaxToken, AppName, validator)
