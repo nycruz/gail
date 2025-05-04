@@ -13,4 +13,4 @@ dev-gpt-o: # Run ChatGPT o-series model
 dev-claude: # Run Claude standard model
 	go run *.go --model=claude
 
-.PHONY: all test clean run dev-gpt dev-claude dev-gpto1 dev-gpto1-mini
+.PHONY: run build dev-gpt dev-gpt-o dev-claude
