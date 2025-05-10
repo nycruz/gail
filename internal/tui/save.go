@@ -5,7 +5,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 )
@@ -45,8 +44,7 @@ func createFileName(content string) string {
 	fileTitle = strings.ReplaceAll(fileTitle, "You:", "")
 	fileTitle = strings.ReplaceAll(fileTitle, " ", "_")
 
-	now := time.Now().Format("2006-01-02-15-04-05")
-	filename := fmt.Sprintf("%s_%s.md", now, fileTitle)
+	filename := fmt.Sprintf("%s.md", fileTitle)
 
 	return filename
 }
