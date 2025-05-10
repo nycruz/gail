@@ -180,6 +180,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case tea.KeyCtrlQ:
 			return m, tea.Quit
 
+		// Ctrl+Shift+Tab to toggle focus between textarea and viewport
 		case tea.KeyShiftTab:
 			m.focusOnTextArea = !m.focusOnTextArea
 			if m.focusOnTextArea {
@@ -197,6 +198,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 			return m, nil
 
+		// Ctrl+S to send the message
 		case tea.KeyCtrlS:
 			m.textAreaContent = m.textarea.Value()
 			m.textarea.Reset()
@@ -208,11 +210,13 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.fetchAnswer(m.role.Name, m.role.Persona, m.skill.Instruction, m.textAreaContent),
 			)
 
+		// Ctrl+R to pick a role
 		case tea.KeyCtrlR:
 			m.isRolePrompt = true
 			m.textarea.Blur()
 			m.focusOnTextArea = false
 
+		// Ctrl+E to pick a skill
 		case tea.KeyCtrlE:
 			m.isSkillPrompt = true
 			m.textarea.Blur()
@@ -223,14 +227,17 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 			return m, m.skillList.SetItems(skillItems)
 
+		// Ctrl+C to enter copy mode
 		case tea.KeyCtrlC:
 			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
 			return m, m.copyModeRun(unformmatedAnswer)
 
+		// Ctrl+D to save the conversation
 		case tea.KeyCtrlD:
 			unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
 			return m, m.saveConversation(unformmatedAnswer)
 
+		// Ctrl+Enter to select a role or skill when in Select mode
 		case tea.KeyEnter:
 			if m.isRolePrompt {
 				c, ok := m.roleList.SelectedItem().(RoleItem)
@@ -298,9 +305,10 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.viewport.GotoBottom()
 		m.isLoading = false
 
-		return m, clearStatusBarAfter(clearStatusBarAfterSeconds * time.Second)
+		unformmatedAnswer := removeANSICodes(strings.Join(m.messagesDisplay, "\n"))
+		return m, tea.Batch(m.saveConversation(unformmatedAnswer), clearStatusBarAfter(clearStatusBarAfterSeconds*time.Second))
 
-	// Clear the status bar when the timer fires
+	// Clear the status bar when the timer expires
 	case clearStatusBarMsg:
 		m.statusBarMessage = defaultStatusMessage
 		return m, nil
