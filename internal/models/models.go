@@ -13,6 +13,6 @@ const (
 	ModelGPToMaxTokens Token  = 100000 // 100,000
 
 	ModelClaude          string = "claude"
-	ModelClaudeName      Model  = "claude-3-7-sonnet-latest"
-	ModelClaudeMaxTokens Token  = 8192 // 8,192
+	ModelClaudeName      Model  = "claude-opus-4-20250514"
+	ModelClaudeMaxTokens Token  = 32000 // 32,000
 )
