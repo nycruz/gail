@@ -20,7 +20,7 @@ const (
 	ViewPortReducerHeight int = 7
 
 	BorderColor        = "8"
-	TextHighlightColor = "6"
+	TextHighlightColor = "209"
 )
 
 var (
