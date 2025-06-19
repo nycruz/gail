@@ -2,9 +2,14 @@ package tui
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+)
+
+var (
+	TextHighlightColor = getEnvWithDefault("GAIL_HIGHLIGHT_COLOR", "6")
 )
 
 const (
@@ -19,8 +24,7 @@ const (
 	// ViewPortReducerWidth is the amount of characters to reduce so the borders do not touch the edges of the terminal window
 	ViewPortReducerHeight int = 7
 
-	BorderColor        = "8"
-	TextHighlightColor = "6"
+	BorderColor = "8"
 )
 
 var (
@@ -136,4 +140,13 @@ func (m model) textAreaHeaderView() string {
 		l.Render(rightBorder),
 		l.Render("╮"),
 	)
+}
+
+// getEnvWithDefault retrieves the value of the environment variable named by key.
+func getEnvWithDefault(key, defaultValue string) string {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+	return value
 }
